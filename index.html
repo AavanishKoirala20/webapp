@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ultrasonic Sensor Dashboard</title>
+    <style>
+        body { font-family: Arial; text-align: center; }
+        h1 { margin-top: 20px; }
+        #distance { font-size: 2em; color: #007BFF; }
+    </style>
+</head>
+<body>
+    <h1>Ultrasonic Sensor Distance</h1>
+    <p>Current Distance:</p>
+    <div id="distance">-- cm</div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "PROJECT_ID.firebaseapp.com",
+            databaseURL: "https://dht12-59008-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "PROJECT_ID",
+            storageBucket: "PROJECT_ID.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Reference to ultrasonic data
+        const ultrasonicRef = db.ref('ultrasonic');
+
+        // Listen for latest data
+        ultrasonicRef.limitToLast(1).on('child_added', (snapshot) => {
+            const data = snapshot.val();
+            document.getElementById('distance').innerText = data.distance + " cm";
+        });
+    </script>
+</body>
+</html>
