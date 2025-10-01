@@ -3,9 +3,9 @@
 <head>
     <title>Ultrasonic Sensor Dashboard</title>
     <style>
-        body { font-family: Arial; text-align: center; }
-        h1 { margin-top: 20px; }
-        #distance { font-size: 2em; color: #007BFF; }
+        body { font-family: Arial; text-align: center; margin-top: 50px; }
+        h1 { color: #333; }
+        #distance { font-size: 2em; color: #007BFF; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -18,36 +18,44 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
-        // Initialize Firebase
+        // TODO: Replace these with your Firebase project values
         const firebaseConfig = {
-    apiKey: "AIzaSyDfXfe72XomxYj7coWith7PK48Mi2lCUdc",
-    authDomain: "dht12-59008.firebaseapp.com",
-    databaseURL: "https://dht12-59008-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "dht12-59008",
-    storageBucket: "dht12-59008.firebasestorage.app",
-    messagingSenderId: "902371164975",
-    appId: "1:902371164975:web:fe4d4b997c09ee9eb317da"
-  };
+            apiKey: "AIzaSyDfXfe72XomxYj7coWith7PK48Mi2lCUdc",
+            authDomain: "dht12-59008.firebaseapp.com",
+            databaseURL: "https://dht12-59008-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dht12-59008",
+            storageBucket: "dht12-59008.firebasestorage.app",
+            messagingSenderId: "902371164975",
+            appId: "1:902371164975:web:fe4d4b997c09ee9eb317da"
+        };
 
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
         // Reference to ultrasonic data
         const ultrasonicRef = db.ref('ultrasonic');
 
-        // Listen for latest data
-        ultrasonicRef.limitToLast(1).on('child_added', (snapshot) => {
-    console.log("Snapshot key:", snapshot.key);
-    console.log("Snapshot value:", snapshot.val());
-    const data = snapshot.val();
-    if(data && data.distance !== undefined){
-        document.getElementById('distance').innerText = data.distance + " cm";
-    } else {
-        document.getElementById('distance').innerText = "No data";
-    }
-});
+        // Listen for all data and find the latest entry
+        ultrasonicRef.on('value', (snapshot) => {
+            const val = snapshot.val();
+            if(val){
+                const keys = Object.keys(val);             // get all timestamp keys
+                keys.sort();                               // sort timestamps ascending
+                const lastKey = keys[keys.length - 1];    // get latest timestamp
+                const distance = val[lastKey].distance;   // get distance value
+                if(distance !== undefined){
+                    document.getElementById('distance').innerText = distance + " cm";
+                } else {
+                    document.getElementById('distance').innerText = "No distance value";
+                }
+            } else {
+                document.getElementById('distance').innerText = "No data available";
+            }
+        }, (error) => {
+            console.error("Firebase read failed: ", error);
+            document.getElementById('distance').innerText = "Error reading data";
+        });
     </script>
 </body>
 </html>
-
-
