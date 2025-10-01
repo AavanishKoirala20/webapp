@@ -37,10 +37,17 @@
 
         // Listen for latest data
         ultrasonicRef.limitToLast(1).on('child_added', (snapshot) => {
-            const data = snapshot.val();
-            document.getElementById('distance').innerText = data.distance + " cm";
-        });
+    console.log("Snapshot key:", snapshot.key);
+    console.log("Snapshot value:", snapshot.val());
+    const data = snapshot.val();
+    if(data && data.distance !== undefined){
+        document.getElementById('distance').innerText = data.distance + " cm";
+    } else {
+        document.getElementById('distance').innerText = "No data";
+    }
+});
     </script>
 </body>
 </html>
+
 
