@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Firebase Path Test</title>
+</head>
+<body>
+    <h1>Firebase /ultrasonic Test</h1>
+    <pre id="output">Loading...</pre>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDfXfe72XomxYj7coWith7PK48Mi2lCUdc",
+            authDomain: "dht12-59008.firebaseapp.com",
+            databaseURL: "https://dht12-59008-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "dht12-59008",
+            storageBucket: "dht12-59008.firebasestorage.app",
+            messagingSenderId: "902371164975",
+            appId: "1:902371164975:web:fe4d4b997c09ee9eb317da"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const ultrasonicRef = db.ref('ultrasonic');
+
+        ultrasonicRef.on('value', snapshot => {
+            const val = snapshot.val();
+            document.getElementById('output').innerText = JSON.stringify(val, null, 2);
+            console.log("Snapshot:", val);
+        }, error => {
+            document.getElementById('output').innerText = "Error reading data: " + error;
+            console.error("Firebase read failed:", error);
+        });
+    </script>
+</body>
+</html>
